@@ -1,21 +1,15 @@
 {
-  "functions": {
-    "api/**/*.php": {
-      "runtime": "vercel-php@0.7.3"
+  "version": 2,
+  "builds": [
+    {
+      "src": "/**.php",
+      "use": "@vercel/php"
     }
-  },
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/api/api/$1" },
-    { "src": "/ini/(.*)", "dest": "/api/ini/$1" },
-    { "src": "/ext/(.*)", "dest": "/api/ext/$1" },
-    { "src": "/(.*)", "dest": "/api/$1" }
   ],
-  "env": {
-    "NOW_PHP_FOO": "bar3"
-  },
-  "build": {
-    "env": {
-      "NOW_PHP_DEBUG": "1"
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/$1.php"
     }
-  }
+  ]
 }

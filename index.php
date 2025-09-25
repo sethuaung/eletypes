@@ -1,39 +1,47 @@
-<?php
-$title = 'Dashboard';
-$current = 'dashboard';
-require __DIR__ . '/partials/header.php';
-require __DIR__ . '/partials/sidebar.php';
-require __DIR__ . '/db.php';
+<?php include 'includes/db.php'; ?>
 
-// Fetching real stats from the database
-$totalUsers = $conn->query("SELECT COUNT(*) as count FROM users")->fetch_assoc()['count'];
-$totalProducts = $conn->query("SELECT COUNT(*) as count FROM products")->fetch_assoc()['count'];
-$totalOrders = $conn->query("SELECT COUNT(*) as count FROM orders")->fetch_assoc()['count'];
-$totalRevenue = $conn->query("SELECT SUM(total) as sum FROM orders WHERE status = 'Paid'")->fetch_assoc()['sum'];
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - E-Commerce</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <?php include 'includes/header.php'; ?>
 
-$stats = [
-    ['label' => 'Total Users', 'value' => number_format($totalUsers)],
-    ['label' => 'Total Products', 'value' => number_format($totalProducts)],
-    ['label' => 'Total Orders', 'value' => number_format($totalOrders)],
-    ['label' => 'Total Revenue', 'value' => '$' . number_format($totalRevenue, 2)],
-];
-?>
-<div class="container-fluid py-4">
-    <div class="page-header mb-4">
-        <h1>Dashboard</h1>
-        <p class="text-muted">Quick overview of what's happening today.</p>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Featured Products</h1>
+        <div class="row">
+            <?php
+     $sql = "SELECT * FROM products";
+     $result = $conn->query($sql);
+     
+     if ($result->num_rows > 0) {
+         while ($row = $result->fetch_assoc()) {
+             echo '
+             <div class="col-md-4 mb-4">
+                 <div class="card product-card">
+                     <img src="assets/images/' . $row['image'] . '" class="card-img-top" alt="' . $row['name'] . '">
+                     <div class="card-body">
+                         <h5 class="card-title">' . $row['name'] . '</h5>
+                         <p class="card-text">$' . $row['price'] . '</p>
+                         <a href="product.php?id=' . $row['id'] . '" class="btn btn-primary">View Product</a>
+                     </div>
+                 </div>
+             </div>';
+         }
+     } else {
+         echo "<p class='text-center'>No products found.</p>";
+     }
+     ?>
+        </div>
     </div>
-    <div class="row g-4">
-        <?php foreach ($stats as $s): ?>
-            <div class="col-md-3">
-                <div class="card p-3 shadow-sm">
-                    <div class="stat-label text-muted"><?= htmlspecialchars($s['label']) ?></div>
-                    <div class="stat-value h4"><?= htmlspecialchars($s['value']) ?></div>
-                </div>
-            </div>
-        <?php endforeach; ?>
-    </div>
-</div>
-<?php
-require __DIR__ . '/partials/footer.php';
-?>
+
+    <?php include 'includes/footer.php'; ?>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/script.js"></script>
+</body>
+</html>
